@@ -5,6 +5,10 @@
 </head>
 <body>
 <%- include partials/_header.ejs %>
-    <!-- Add your EJS code here -->
+
+  <% for(var url in urls) { %>
+    <li><%= url + ": " + urls[url]%></li>
+  <% } %>
+
 </body>
 </html>
