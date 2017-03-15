@@ -25,6 +25,11 @@ var users = {
     id: "user2RandomID",
     email: "user2@example.com",
     password: "dishwasher-funk"
+  },
+   "xg9nb6": {
+    id: "xg9nb6",
+    email: "test@test.com",
+    password: "test"
   }
 }
 
@@ -34,7 +39,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  let userID = req.cookies["user_id"];
+  let templateVars = { urls: urlDatabase, user: users[userID] };
   res.render("urls_index", templateVars);
 });
 
@@ -50,7 +56,9 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  let templateVars = { username: req.cookies["username"] };
+  let userID = req.cookies["user_id"];
+  let templateVars = { urls: urlDatabase, user: users[userID] };
+  // console.log(userID, users[userID]);
   res.render("urls_register", templateVars);
 });
 
@@ -92,18 +100,22 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect("/");
 });
 
 app.post("/register", (req, res) => {
+  if (!req.body.email || !req.bodypassword) {
+    res.status(400).send("Error: Something failed!")
+  } else {
   var userID = generateRandomString();
   users[userID] = {
     "id": userID,
-    "e-mail": req.body.email,
+    "email": req.body.email,
     "password": req.body.password
   }
   res.cookie('user_id', userID);
+}
 
 console.log(users);
   res.redirect("/");
