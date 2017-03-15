@@ -26,12 +26,17 @@ var users = {
     email: "user2@example.com",
     password: "dishwasher-funk"
   },
-   "xg9nb6": {
+  "xg9nb6": {
     id: "xg9nb6",
     email: "test@test.com",
     password: "test"
+  },
+   "test555": {
+    id: "test555",
+    email: "test555@test.com",
+    password: "test555"
   }
-}
+};
 
 
 app.get("/", (req, res) => {
@@ -98,22 +103,22 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls/" + shortURL);
 });
 
+
 app.post("/login", (req, res) => {
+  let match = 0;
   for (var user in users) {
-    if (users[user].email === req.body.email) {
-      let cookieUser = user;
-      let cookieEmail = users[user].email;
-      let cookiePassword = users[user].password;
-      res.cookie('user_id', cookieUser);
-    } else {
-      res.status(403).send('User not found');
+    if (users[user].email === req.body.email && users[user].password === req.body.password) {
+      res.cookie('user_id', user);
+      match++;
     }
   }
-
-//   res.cookie('email', req.body.email);
-
-  res.redirect("/");
+  if (match === 0) {
+    res.status(403).send('Invalid e-mail/password combo');
+  } else {
+    res.redirect("/");
+  }
 });
+
 
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
@@ -121,7 +126,7 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  if (!req.body.email || !req.bodypassword) {
+  if (!req.body.email || !req.body.password) {
     res.status(400).send('Error!');
   } else {
   var userID = generateRandomString();
