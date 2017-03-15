@@ -45,13 +45,13 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies["username"] };
+  let templateVars = { user_id: req.cookies["user_id"] };
   res.render("urls_new", templateVars);
 });
 
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"] };
+  let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id], user_id: req.cookies["user_id"] };
   res.render("urls_show", templateVars);
 });
 
@@ -62,7 +62,11 @@ app.get("/register", (req, res) => {
   res.render("urls_register", templateVars);
 });
 
-
+app.get("/login", (req, res) => {
+  let userID = req.cookies["user_id"];
+  let templateVars = { urls: urlDatabase, user: users[userID] };
+  res.render("urls_login", templateVars);
+});
 
 function generateRandomString() {
   var shortString = "";
@@ -95,7 +99,19 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
+  for (var user in users) {
+    if (users[user].email === req.body.email) {
+      let cookieUser = user;
+      let cookieEmail = users[user].email;
+      let cookiePassword = users[user].password;
+      res.cookie('user_id', cookieUser);
+    } else {
+      res.status(403).send('User not found');
+    }
+  }
+
+//   res.cookie('email', req.body.email);
+
   res.redirect("/");
 });
 
@@ -106,7 +122,7 @@ app.post("/logout", (req, res) => {
 
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.bodypassword) {
-    res.status(400).send("Error: Something failed!")
+    res.status(400).send('Error!');
   } else {
   var userID = generateRandomString();
   users[userID] = {
