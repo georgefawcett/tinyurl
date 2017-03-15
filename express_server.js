@@ -3,6 +3,10 @@ var app = express();
 var PORT = process.env.PORT || 8080; // default port 8080
 app.set("view engine", "ejs")
 
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -28,8 +32,7 @@ app.get("/urls/:id", (req, res) => {
 });
 
 
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
+
 
 
 function generateRandomString() {
@@ -54,13 +57,13 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls/");
 });
 
-// app.post("/urls/:id", (req, res) => {
-//   console.log(req.body);  // debug statement to see POST parameters
-//   delete urlDatabase[req.params.id];
-//   var shortURL = generateRandomString();
-//   urlDatabase[] = req.body.longURL;
-//   res.redirect("/urls/" + shortURL);
-// });
+app.post("/urls/:id", (req, res) => {
+  console.log(req.body);  // debug statement to see POST parameters
+  delete urlDatabase[req.params.id];
+  var shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.editLongURL;
+  res.redirect("/urls/" + shortURL);
+});
 
 app.get("/u/:shortURL", (req, res) => {
   let shortCode = req.params.shortURL;

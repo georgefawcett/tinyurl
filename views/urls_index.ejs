@@ -7,11 +7,11 @@
 <%- include partials/_header.ejs %>
 
   <% for(var url in urls) { %>
-    <li><%= url %> --> <a href="<%= urls[url]%>"><%= urls[url] %></a></li>
-    <form method="POST" action="/urls/<%= url %>/delete">
-      <input type="submit" name="delete" value="Delete">
-    </form>
+    <li><%= url %> --> <a href="<%= urls[url]%>"><%= urls[url] %></a>
+    <a href="/urls/<%= url %>">Edit</a><form method="POST" action="/urls/<%= url %>/delete"><input type="submit" name="delete" value="Delete"></form>
+    </li>
   <% } %>
+
 
 </body>
 </html>
