@@ -170,11 +170,10 @@ app.post("/register", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   let shortCode = req.params.shortURL;
-  let longURL = urlDatabase[shortCode];
-  console.log(shortCode, longURL);
+  let longURL = urlDatabase[shortCode].url;
   res.redirect(longURL);
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`tinyApp is listening on port ${PORT}`);
 });
