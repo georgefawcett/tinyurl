@@ -1,17 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>TinyApp</title>
-</head>
-<body>
-<%- include partials/_header.ejs %>
+<%- include partials/_header %>
 
-  <% for(var url in urls) { %>
-    <li><%= url %> --> <a href="<%= urls[url]%>"><%= urls[url] %></a>
-    <a href="/urls/<%= url %>">Edit</a><form method="POST" action="/urls/<%= url %>/delete"><input type="submit" name="delete" value="Delete"></form>
-    </li>
-  <% } %>
+<% if (user) { %>
+  <tr>
+    <td colspan="100%">
+      <b>Your Links</b>
+    </td>
+  </tr>
 
+  <% var links = 0;
 
-</body>
-</html>
+  for (var entry in urls) {
+
+    if (urls[entry].user_id === user.id) {
+      links++ %>
+      <tr>
+        <td width="30">
+          <a href="/u/<%= entry %>">/u/<%= entry %></a>
+        </td>
+        <td>
+          <a href="<%= urls[entry].url %>"><%= urls[entry].url %></a>
+        </td>
+        <td width="25">
+          <a href="/urls/<%= entry %>">Edit</a>
+        </td>
+        <td width="40">
+          <form method="POST" action="/urls/<%= entry %>/delete"><input type="submit" class="deletebutton" name="delete" value="Delete"></form>
+        </td>
+      </tr>
+    <% }
+
+   }
+
+  if (!links) { %>
+    <tr>
+      <td>
+        You do not currently have any links.
+      </td>
+    </tr>
+  <% }
+
+  } %>
+
+<%- include partials/_footer %>

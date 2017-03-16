@@ -1,14 +1,80 @@
-<h1>Header</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>tinyApp</title>
+  <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      font-family: Arial;
+      font-size: 14px;
+    }
 
-<% if(user){ %>
-<%= user.id %>, <%= user.email %>, <%= user.password %>
-<br><br>
-    <form action="/logout" method="POST">
-      <input type="submit" value="Logout" name="logout">
-    </form>
+    tr:nth-child(2n+3) {background: #EEEEEE}
+    tr:nth-child(2n+4) {background: #FFFFFF}
 
-<% }else{ %>
+    th, td {
+      padding: 10px;
+    }
+    th.tabletop {
+      background-color: black;
+    }
+    a:link {
+      color: #003366;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    a:active {
+      text-decoration: underline;
+      color: black;
+    }
+    a:visited {
+      color: #003366;
+      text-decoration: none;
+    }
+    .deletebutton {
+      border: 1px solid red;
+      background-color: white;
+      color: red;
+      border-radius: 4px;
+      -webkit-transition-duration: 0.2s; /* Safari */
+      transition-duration: 0.2s;
+    }
+    .deletebutton:hover {
+      background-color: red;
+      color: white;
+    }
+  </style>
+</head>
+<body>
 
-    <a href="/register">Register</a> - <a href="/login">Login</a>
+<center>
+<table>
+  <tr>
+    <th class="tabletop" colspan="100%">
+      <font face="Lobster" color="#eeeeee" style="font-size: 20px">tinyApp</font>
+    </th>
+  </tr>
+  <tr>
+    <td colspan="100%" style="vertical-align: middle">
 
-<% } %>
+      <% if (user) { %>
+
+      <form action="/logout" method="POST">
+      Logged in as: <%= user.email %>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="/urls">Your Links</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="/urls/new">Add New Link</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="submit" value="Logout" name="logout" style="float: right" />
+      </form>
+
+      <% } else { %>
+
+          <center>
+          Please <a href="/login">login</a> or <a href="/register">register</a>.
+          </center>
+
+      <% } %>
+
+    </td>
+  </tr>
