@@ -7,7 +7,7 @@
   </tr>
   <tr>
     <td>
-    <% if (user) { %>
+    <% if (user === owner) { %>
       <form method="POST" action="/urls/<%= shortURL %>">
         <label for="editLongURL">URL:</label>
         <input type="text" name="editLongURL" value="<%= longURL %>" size="30">
