@@ -1,0 +1,19 @@
+<%- include partials/_header %>
+<tr>
+<td>
+
+<% if (error === "missingreginfo") { %>
+<b>Error:</b> Missing username or password.  Please try again.
+<% } else if (error === "shortURLnotfound") { %>
+<b>Error:</b> Page not found.  Please verify the URL.
+<% } else if (error === "userpasscombo") { %>
+<b>Error:</b> Invalid e-mail/password combination.  Please try again.
+<% } else if (error === "loginrequired") { %>
+<b>Error:</b> You do not have access to manage this link.  Please login.
+<% } %>
+</td>
+</tr>
+
+
+
+<%- include partials/_footer %>

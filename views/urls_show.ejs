@@ -7,7 +7,7 @@
   </tr>
   <tr>
     <td>
-    <% if (user === owner) { %>
+
       <form method="POST" action="/urls/<%= shortURL %>">
         <label for="editLongURL">URL:</label>
         <input type="text" name="editLongURL" value="<%= longURL %>" size="30">
@@ -17,11 +17,9 @@
     </td>
     <td width="40">
       <form method="POST" action="/urls/<%= shortURL %>/delete">
-        <input type="submit" name="delete" value="Delete">
+        <input type="submit" class="deletebutton" name="delete" value="Delete">
       </form>
-      <% } else { %>
-      You do not have access to edit this link.  Please <a href="/login">login</a>.
-      <% } %>
+
     </td>
   </tr>
 

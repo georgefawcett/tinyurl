@@ -61,30 +61,55 @@ const users = {
 app.get("/", (req, res) => {
   const userID = req.session.user_id;
   const templateVars = { urls: urlDatabase, user: users[userID] };
-  res.render("urls_index", templateVars);
+  if (userID) {
+    res.render("urls_index", templateVars);
+  } else {
+    res.render("urls_login", templateVars);
+  }
 });
 
 app.get("/urls", (req, res) => {
   const userID = req.session.user_id;
   const templateVars = { urls: urlDatabase, user: users[userID] };
-  res.render("urls_index", templateVars);
+  if (userID) {
+    res.render("urls_index", templateVars);
+  } else {
+    res.status(401).render("urls_login", templateVars);
+  }
 });
 
 app.get("/urls/new", (req, res) => {
-  if (req.session.user_id) {
-    const userID = req.session.user_id;
-    const templateVars = { user: users[userID] };
+  const userID = req.session.user_id;
+  const templateVars = { urls: urlDatabase, user: users[userID] };
+  if (userID) {
     res.render("urls_new", templateVars);
   } else {
-    res.redirect("/login");
+    res.status(401).render("urls_login", templateVars);
   }
 });
 
 app.get("/urls/:id", (req, res) => {
+  const shortCode = req.params.id;
   const userID = req.session.user_id;
-  const templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id].url, owner: urlDatabase[req.params.id].user_id, user: userID };
-  res.render("urls_show", templateVars);
+  const owner = urlDatabase[req.params.id].user_id;
+  if (!urlDatabase[shortCode]) {
+    const templateVars = { urls: urlDatabase, user: users[userID], error: "shortURLnotfound" };
+    res.status(404).render("urls_error", templateVars);
+  } else if (!userID) {
+    const templateVars = { urls: urlDatabase, user: users[userID], error: "loginrequired" };
+    res.status(401).render("urls_error", templateVars);
+  } else if (userID != owner) {
+    const templateVars = { urls: urlDatabase, user: users[userID], error: "loginrequired" };
+    res.status(403).render("urls_error", templateVars);
+  } else {
+    const templateVars = { shortURL: shortCode, longURL: urlDatabase[req.params.id].url, owner: urlDatabase[req.params.id].user_id, user: userID };
+    res.render("urls_show", templateVars);
+  }
+
 });
+
+
+
 
 app.get("/register", (req, res) => {
   const userID = req.session.user_id;
@@ -126,6 +151,7 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
+
 app.post("/login", (req, res) => {
   const bcrypt = require('bcrypt');
   var match = 0;
@@ -136,7 +162,9 @@ app.post("/login", (req, res) => {
     }
   }
   if (match === 0) {
-    res.status(403).send('Invalid e-mail/password combination');
+    const userID = req.session.user_id;
+    const templateVars = { urls: urlDatabase, user: users[userID], error: "userpasscombo" };
+    res.status(403).render("urls_error", templateVars);
   } else {
     res.redirect("/urls");
   }
@@ -149,19 +177,20 @@ app.post("/logout", (req, res) => {
 
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password) {
-    res.status(400).send('Error!');
+    const userID = req.session.user_id;
+    const templateVars = { urls: urlDatabase, user: users[userID], error: "missingreginfo" };
+    res.status(400).render("urls_error", templateVars);
   } else {
-  var userID = generateRandomString();
-  const bcrypt = require('bcrypt');
-  const hashed_password = bcrypt.hashSync(req.body.password, 10);
-  users[userID] = {
-    "id": userID,
-    "email": req.body.email,
-    "password": hashed_password
+    var userID = generateRandomString();
+    const bcrypt = require('bcrypt');
+    const hashed_password = bcrypt.hashSync(req.body.password, 10);
+    users[userID] = {
+      "id": userID,
+      "email": req.body.email,
+      "password": hashed_password
+    }
+    req.session.user_id = userID;
   }
-  req.session.user_id = userID;
-}
-
   res.redirect("/urls");
 });
 
@@ -169,8 +198,14 @@ app.post("/register", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   const shortCode = req.params.shortURL;
-  const longURL = urlDatabase[shortCode].url;
-  res.redirect(longURL);
+  if (urlDatabase[shortCode]) {
+    const longURL = urlDatabase[shortCode].url;
+    res.redirect(longURL);
+  } else {
+    const userID = req.session.user_id;
+    const templateVars = { urls: urlDatabase, user: users[userID], error: "shortURLnotfound" };
+    res.status(404).render("urls_error", templateVars);
+  }
 });
 
 app.listen(PORT, () => {
